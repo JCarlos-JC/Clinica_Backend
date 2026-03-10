@@ -1,0 +1,27 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('metodos_pagamento', function (Blueprint $table) {
+            $table->id();
+            $table->string('nome', 100)->unique();
+            $table->string('codigo', 20)->nullable()->unique();
+            $table->text('descricao')->nullable();
+            $table->boolean('requer_comprovante')->default(false);
+            $table->boolean('requer_confirmacao')->default(false);
+            $table->boolean('ativo')->default(true);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('metodos_pagamento');
+    }
+};

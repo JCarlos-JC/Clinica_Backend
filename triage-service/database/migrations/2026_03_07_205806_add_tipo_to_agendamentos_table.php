@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('agendamentos_consulta', function (Blueprint $table) {
+            $table->enum('tipo', [
+                'triagem',
+                'transferencia_medico',
+                'transferencia_especialidade'
+            ])->nullable()->default('triagem')->after('status');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('agendamentos_consulta', function (Blueprint $table) {
+            $table->dropColumn('tipo');
+        });
+    }
+};
