@@ -251,14 +251,7 @@ Route::middleware([\App\Http\Middleware\MicroserviceAuth::class])->group(functio
 
 });
 
-// Health check (sem autenticação)
-Route::get('/health', function () {
-    return response()->json([
-        'service' => 'patient-service',
-        'status' => 'online',
-        'timestamp' => now()->toIso8601String(),
-    ]);
-});
+
 
 // Verificação temporária (sem autenticação)
 Route::get('/verificar-pagamentos', function() {
