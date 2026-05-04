@@ -41,14 +41,18 @@ class TriagemController extends Controller
         if (is_array($remote) && count($remote) > 0) {
             $page = LengthAwarePaginator::resolveCurrentPage();
             $items = array_slice($remote, ($page - 1) * $perPage, $perPage);
-            $paginator = new LengthAwarePaginator($items, count($remote), $perPage, $page, [
-                'path' => $request->url(),
-                'query' => $request->query()
-            ]);
-
+            
+            // ✅ RETORNAR DIRETAMENTE O ARRAY, não um objeto paginator
+            // O frontend espera receber um array de solicitações
             return response()->json([
                 'status' => 'success',
-                'data' => $paginator
+                'data' => $items,
+                'meta' => [
+                    'total' => count($remote),
+                    'per_page' => $perPage,
+                    'current_page' => $page,
+                    'total_pages' => ceil(count($remote) / $perPage)
+                ]
             ]);
         }
 

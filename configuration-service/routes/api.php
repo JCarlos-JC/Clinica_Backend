@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\EstadoConsultaController;
 use App\Http\Controllers\Api\ClassificacaoRiscoController;
 use App\Http\Controllers\Api\EstadoUrgenciaController;
 use App\Http\Controllers\Api\TipoExameController;
+use App\Http\Controllers\Api\ExameController;
 
 
 
@@ -240,6 +241,10 @@ Route::middleware([\App\Http\Middleware\MicroserviceAuth::class])->group(functio
     // Exames
     Route::apiResource('/tipos-exame', TipoExameController::class);
     Route::get('/tipos-exame/categoria/{categoria}', [TipoExameController::class, 'getByCategoria']);
+    
+    // Preços de Exames
+    Route::get('/exames/preco', [ExameController::class, 'getPreco']); // ANTES do apiResource
+    Route::apiResource('/exames', ExameController::class);
 });
 
 // // Rota pública para verificação de saúde do serviço

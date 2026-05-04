@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\HistoricoController;
 use App\Http\Controllers\Api\SolicitacaoExameController;
 use App\Http\Controllers\Api\SolicitacaoTriagemController;
 use App\Http\Controllers\Api\PagamentoEspecialidadeController;
+use App\Http\Controllers\Api\PagamentoConsultaController;
 use App\Models\Paciente;
 
 /*
@@ -106,7 +107,7 @@ Route::middleware([\App\Http\Middleware\MicroserviceAuth::class])->group(functio
         Route::post('{id}/marcar-triagem', [PacienteController::class, 'marcarTriagem']);
         
         // 💰 PAGAMENTO - SISTEMA NOVO (salva na tabela pagamentos_consultas)
-        Route::post('processar-pagamento', [\App\Http\Controllers\Api\PagamentoConsultaController::class, 'processarPagamento']);
+        Route::post('processar-pagamento', [PagamentoConsultaController::class, 'processarPagamento']);
         
         // Pagamento de transferência de especialidade
         Route::post('pagamento-especialidade', [PacienteController::class, 'processarPagamentoEspecialidade']);

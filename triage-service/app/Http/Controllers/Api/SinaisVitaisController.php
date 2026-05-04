@@ -239,6 +239,7 @@ class SinaisVitaisController extends Controller
             // If triagem still null, attempt to find a pending solicitacao for the paciente and create triagem
             if (!$triagem) {
                 $pacienteId = $request->get('paciente_id');
+                $triagem_id_sent = $request->get('triagem_id');
 
                 if (!$pacienteId) {
                     return response()->json([
@@ -250,11 +251,26 @@ class SinaisVitaisController extends Controller
                 $patientClient = new PatientServiceClient();
                 $pendentes = $patientClient->getPendentes();
 
+                \Log::debug('SinaisVitaisController.store() - Debug Info:', [
+                    'paciente_id_requested' => $pacienteId,
+                    'triagem_id_requested' => $triagem_id_sent,
+                    'pendentes_count' => is_array($pendentes) ? count($pendentes) : 'not_array',
+                    'pendentes_data' => is_array($pendentes) ? $pendentes : 'not_array'
+                ]);
+
                 $matching = null;
                 if (is_array($pendentes)) {
                     foreach ($pendentes as $s) {
                         // accept either paciente_id key or nested paciente.id
                         $sidPaciente = $s['paciente_id'] ?? ($s['paciente']['id'] ?? null);
+                        
+                        \Log::debug('SinaisVitaisController.store() - Checking solicitacao:', [
+                            'solicitacao_id' => $s['id'] ?? null,
+                            'solicitacao_status' => $s['status'] ?? null,
+                            'solicitacao_paciente_id' => $sidPaciente,
+                            'matches_requested_paciente' => intval($sidPaciente) === intval($pacienteId)
+                        ]);
+                        
                         if ($sidPaciente && intval($sidPaciente) === intval($pacienteId)) {
                             $matching = $s;
                             break;
@@ -263,6 +279,12 @@ class SinaisVitaisController extends Controller
                 }
 
                 if (!$matching) {
+                    \Log::error('SinaisVitaisController.store() - No matching solicitacao found', [
+                        'paciente_id' => $pacienteId,
+                        'triagem_id' => $triagem_id_sent,
+                        'pendentes_count' => is_array($pendentes) ? count($pendentes) : 0
+                    ]);
+                    
                     return response()->json([
                         'status' => 'error',
                         'message' => 'Não foi encontrada solicitação de triagem pendente para este paciente'

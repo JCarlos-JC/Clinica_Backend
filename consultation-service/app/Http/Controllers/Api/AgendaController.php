@@ -48,7 +48,9 @@ class AgendaController extends Controller
                 'triage_url' => config('services.triage.url')
             ]);
             
-            $agendamentos = $this->triageService->listarAgendamentos($filtros);
+            // Passar o token JWT do usuário atual para o triage-service
+            $token = $request->bearerToken();
+            $agendamentos = $this->triageService->listarAgendamentos($filtros, $token);
             
             // Enriquecer cada agendamento com dados do paciente e históricos
             if (isset($agendamentos['data']['data']) && is_array($agendamentos['data']['data'])) {

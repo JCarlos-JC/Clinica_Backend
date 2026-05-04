@@ -107,15 +107,28 @@ class TriageServiceClient
     /**
      * Lista todos os agendamentos do triage-service
      */
-    public function listarAgendamentos($filtros = [])
+    public function listarAgendamentos($filtros = [], $token = null)
     {
         try {
-            $url = "{$this->baseUrl}/api/agendamentos";
+            $url = "{$this->baseUrl}/api/agendamentos/";
             
-            $response = Http::withHeaders([
-                    'X-Service-Token' => $this->serviceToken,
-                    'Accept' => 'application/json',
-                ])
+            $headers = [
+                'Accept' => 'application/json',
+            ];
+            
+            // Se um token JWT foi fornecido, usá-lo
+            if ($token) {
+                $headers['Authorization'] = "Bearer {$token}";
+                Log::info('TriageServiceClient: Usando token JWT', [
+                    'token_prefix' => substr($token, 0, 20) . '...',
+                ]);
+            } else {
+                // Caso contrário, usar o SERVICE_TOKEN
+                $headers['X-Service-Token'] = $this->serviceToken;
+                Log::info('TriageServiceClient: Sem token fornecido, usando SERVICE_TOKEN');
+            }
+            
+            $response = Http::withHeaders($headers)
                 ->timeout(10)
                 ->get($url, $filtros);
 
@@ -125,7 +138,8 @@ class TriageServiceClient
 
             Log::warning('Falha ao listar agendamentos', [
                 'status' => $response->status(),
-                'response' => $response->body()
+                'response' => $response->body(),
+                'token_provided' => !empty($token)
             ]);
 
             return ['data' => []];
