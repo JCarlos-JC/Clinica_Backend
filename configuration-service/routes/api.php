@@ -211,8 +211,7 @@ Route::middleware([\App\Http\Middleware\MicroserviceAuth::class])->group(functio
     
     // Organização (singular e plural para compatibilidade)
     Route::apiResource('/unidades-organica', UnidadeOrganicaController::class);
-    Route::get('/unidades-organicas', [UnidadeOrganicaController::class, 'index']); // Alias plural
-    Route::get('/unidades-organicas/{id}', [UnidadeOrganicaController::class, 'show']); // Alias plural
+    Route::apiResource('/unidades-organicas', UnidadeOrganicaController::class); // Alias plural com suporte completo a CRUD
     
     // Pagamentos
     Route::apiResource('/metodos-pagamento', MetodoPagamentoController::class);
